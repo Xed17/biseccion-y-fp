@@ -1,204 +1,67 @@
-// app.js - Manejador de eventos y renderizado de la interfaz
-
 document.addEventListener('DOMContentLoaded', () => {
-  initTabs();
-  renderFormulas();
-  setupEventListeners();
+  // Tabs
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // KaTeX formulas
+  if (typeof katex !== 'undefined') {
+    katex.render(problems.networkCapacity.latexFormula, document.getElementById('formula-network'), { displayMode: true, throwOnError: false });
+    katex.render(problems.cloudMigration.latexFormula, document.getElementById('formula-cloud'), { displayMode: true, throwOnError: false });
+  }
+
+  // Buttons
+  document.getElementById('btn-run-network').addEventListener('click', () => run(problems.networkCapacity, 'network'));
+  document.getElementById('btn-run-cloud').addEventListener('click', () => run(problems.cloudMigration, 'cloud'));
 });
 
-// 1. Inicialización de pestañas
-function initTabs() {
-  const tabButtons = document.querySelectorAll('.tab-button');
-  const tabPanels = document.querySelectorAll('.tab-panel');
-
-  tabButtons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const targetId = btn.getAttribute('data-tab');
-
-      tabButtons.forEach((b) => b.classList.remove('active'));
-      tabPanels.forEach((p) => p.classList.remove('active'));
-
-      btn.classList.add('active');
-      const targetPanel = document.getElementById(targetId);
-      if (targetPanel) {
-        targetPanel.classList.add('active');
-      }
-    });
-  });
-}
-
-// 2. Renderizado de fórmulas con KaTeX
-function renderFormulas() {
-  if (typeof katex === 'undefined') {
-    // Si KaTeX no carga, dejamos texto plano legible
-    document.getElementById('formula-network').textContent = 'f(C) = 1/(C - 8.5) - 0.35 ln(C - 2) = 0';
-    document.getElementById('formula-cloud').textContent = 'f(t) = 45 + 12t - 20 e^(0.4t) = 0';
-    return;
-  }
-
-  try {
-    katex.render(problems.networkCapacity.latexFormula, document.getElementById('formula-network'), {
-      displayMode: true,
-      throwOnError: false
-    });
-
-    katex.render(problems.cloudMigration.latexFormula, document.getElementById('formula-cloud'), {
-      displayMode: true,
-      throwOnError: false
-    });
-
-    katex.render(problems.cloudMigration.costFormulasLatex.c1, document.getElementById('formula-cloud-c1'), {
-      displayMode: false,
-      throwOnError: false
-    });
-
-    katex.render(problems.cloudMigration.costFormulasLatex.c2, document.getElementById('formula-cloud-c2'), {
-      displayMode: false,
-      throwOnError: false
-    });
-  } catch (err) {
-    console.error('Error renderizando fórmulas con KaTeX:', err);
-  }
-}
-
-// 3. Configuración de botones de ejecución
-function setupEventListeners() {
-  const btnNetwork = document.getElementById('btn-run-network');
-  if (btnNetwork) {
-    btnNetwork.addEventListener('click', () => {
-      runMethod(problems.networkCapacity, 'network');
-    });
-  }
-
-  const btnCloud = document.getElementById('btn-run-cloud');
-  if (btnCloud) {
-    btnCloud.addEventListener('click', () => {
-      runMethod(problems.cloudMigration, 'cloud');
-    });
-  }
-}
-
-// 4. Lógica de ejecución general
-function runMethod(problem, prefix) {
-  const alertEl = document.getElementById(`alert-${prefix}`);
-  const resultsContainer = document.getElementById(`results-container-${prefix}`);
-
-  // Ocultar alertas previas
-  alertEl.className = 'alert-message';
+function run(problem, id) {
+  const alertEl = document.getElementById('alert-' + id);
+  const resultsEl = document.getElementById('results-' + id);
+  alertEl.classList.add('hidden');
   alertEl.textContent = '';
 
-  const a = problem.defaultA;
-  const b = problem.defaultB;
-  const tolerance = problem.defaultTolerance;
-  const maxIterations = problem.defaultMaxIterations;
+  const { defaultA: a, defaultB: b, defaultTolerance: tol, defaultMaxIterations: maxIter } = problem;
 
-  // Validación de dominio del problema
-  const domainError = problem.validateDomain(a, b);
-  if (domainError) {
-    alertEl.textContent = domainError;
-    alertEl.classList.add('error');
-    resultsContainer.classList.add('hidden');
-    return;
+  const domainErr = problem.validateDomain(a, b);
+  if (domainErr) { showAlert(alertEl, domainErr); resultsEl.classList.add('hidden'); return; }
+
+  // Sign check
+  const fa = problem.f(a), fb = problem.f(b), prod = fa * fb;
+  const sign = prod < 0 ? '✓ Cambio de signo detectado' : prod === 0 ? '✓ Raíz en extremo' : '✗ Sin cambio de signo';
+  document.getElementById('sign-info-' + id).innerHTML =
+    `f(${a}) = <strong>${formatNumber(fa)}</strong> · f(${b}) = <strong>${formatNumber(fb)}</strong> · Producto: <strong>${formatNumber(prod)}</strong> → ${sign}`;
+
+  // Run algorithm
+  const result = problem.algorithm(problem.f, a, b, tol, maxIter);
+
+  if (!result.success && (!result.rows || result.rows.length === 0)) {
+    showAlert(alertEl, result.message); resultsEl.classList.add('hidden'); return;
   }
 
-  // Evaluación inicial de f(a) y f(b)
-  const fa = problem.f(a);
-  const fb = problem.f(b);
-  const prod = fa * fb;
+  resultsEl.classList.remove('hidden');
 
-  // Renderizar la verificación de signos en la interfaz
-  renderSignVerification(prefix, a, b, fa, fb, prod);
+  // Summary
+  document.getElementById('summary-' + id).innerHTML =
+    `<p><strong>Raíz:</strong> ${formatNumber(result.root)} ${problem.units} · <strong>f(raíz):</strong> ${formatNumber(result.fRoot, 8)} · <strong>Error:</strong> ${formatError(result.error)} · <strong>Iteraciones:</strong> ${result.iterations} · ${result.message}</p>`;
 
-  // Ejecutar el algoritmo numérico
-  const result = problem.algorithm(problem.f, a, b, tolerance, maxIterations);
-
-  if (!result.success && result.rows.length === 0) {
-    alertEl.textContent = result.message;
-    alertEl.classList.add('error');
-    resultsContainer.classList.add('hidden');
-    return;
-  }
-
-  // Mostrar el contenedor de resultados
-  resultsContainer.classList.remove('hidden');
-
-  // Renderizar resumen, tabla e interpretación
-  renderSummary(prefix, problem, result);
-  renderTableRows(prefix, result.rows);
-  renderInterpretation(prefix, problem, result);
-}
-
-// 5. Renderizado de verificación de signos
-function renderSignVerification(prefix, a, b, fa, fb, prod) {
-  const faEl = document.getElementById(`sign-fa-${prefix}`);
-  const fbEl = document.getElementById(`sign-fb-${prefix}`);
-  const prodEl = document.getElementById(`sign-prod-${prefix}`);
-  const statusEl = document.getElementById(`sign-status-${prefix}`);
-
-  faEl.textContent = formatNumber(fa, 6);
-  fbEl.textContent = formatNumber(fb, 6);
-  prodEl.textContent = formatNumber(prod, 6);
-
-  statusEl.replaceChildren();
-  const tag = document.createElement('span');
-  tag.className = 'sign-status-tag';
-
-  if (prod < 0) {
-    tag.classList.add('valid');
-    tag.textContent = '✓ Hay cambio de signo en el intervalo: f(a) · f(b) < 0. El método cerrado puede aplicarse.';
-  } else if (prod === 0) {
-    tag.classList.add('valid');
-    tag.textContent = '✓ Uno de los extremos es raíz exacta: f(a) · f(b) = 0.';
-  } else {
-    tag.classList.add('invalid');
-    tag.textContent = '✗ No hay cambio de signo: f(a) · f(b) > 0. No se garantiza una raíz en este intervalo.';
-  }
-
-  statusEl.appendChild(tag);
-}
-
-// 6. Renderizado del resumen de convergencia
-function renderSummary(prefix, problem, result) {
-  const rootEl = document.getElementById(`summary-root-${prefix}`);
-  const frootEl = document.getElementById(`summary-froot-${prefix}`);
-  const errorEl = document.getElementById(`summary-error-${prefix}`);
-  const itersEl = document.getElementById(`summary-iters-${prefix}`);
-
-  rootEl.textContent = `${formatNumber(result.root, 6)} ${problem.units}`;
-  frootEl.textContent = formatNumber(result.fRoot, 8);
-  errorEl.textContent = formatError(result.error);
-  itersEl.textContent = `${result.iterations} (${result.message})`;
-}
-
-// 7. Renderizado seguro de las filas de la tabla
-function renderTableRows(prefix, rows) {
-  const tbody = document.getElementById(`table-body-${prefix}`);
+  // Table
+  const tbody = document.getElementById('tbody-' + id);
   tbody.replaceChildren();
-
-  rows.forEach((row) => {
+  for (const row of result.rows) {
     const tr = document.createElement('tr');
-
-    const cellData = [
-      row.iteration,
-      formatNumber(row.a, 6),
-      formatNumber(row.b, 6),
-      formatNumber(row.xr, 6),
-      formatNumber(row.fxr, 6),
-      formatError(row.ea)
-    ];
-
-    cellData.forEach((val) => {
-      const td = document.createElement('td');
-      td.textContent = val;
-      tr.appendChild(td);
-    });
-
+    [row.iteration, formatNumber(row.a), formatNumber(row.b), formatNumber(row.xr), formatNumber(row.fxr), formatError(row.ea)]
+      .forEach(v => { const td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
     tbody.appendChild(tr);
-  });
+  }
+
+  // Interpretation
+  document.getElementById('interp-' + id).innerHTML = problem.getInterpretation(result);
 }
 
-// 8. Renderizado de la interpretación contextual
-function renderInterpretation(prefix, problem, result) {
-  const interpEl = document.getElementById(`interpretation-${prefix}`);
-  interpEl.innerHTML = problem.getInterpretation(result);
-}
+function showAlert(el, msg) { el.textContent = msg; el.classList.remove('hidden'); }
