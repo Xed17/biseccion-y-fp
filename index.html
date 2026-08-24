@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Métodos Numéricos: Bisección y Falsa Posición</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Encabezado -->
+    <header class="app-header">
+      <h1>Métodos Numéricos</h1>
+      <p>Resolución de problemas de ingeniería mediante Bisección y Falsa Posición</p>
+    </header>
+
+    <!-- Navegación por pestañas -->
+    <nav class="tabs-container" aria-label="Problemas">
+      <button class="tab-button active" id="tab-btn-network" data-tab="tab-network">Problema 1: Bisección</button>
+      <button class="tab-button" id="tab-btn-cloud" data-tab="tab-cloud">Problema 2: Falsa Posición</button>
+    </nav>
+
+    <!-- Panel Problema 1: Capacidad de Enlace (Bisección) -->
+    <section class="tab-panel active" id="tab-network">
+      <div class="card">
+        <h2 class="card-title">Problema 1: Capacidad de Enlace de Red</h2>
+        <div class="card-subtitle">Método de Bisección</div>
+        <p class="card-description">
+          Determina la capacidad de enlace $C$ (Mbps) necesaria para garantizar un retardo objetivo nulo en el canal de comunicaciones.
+        </p>
+
+        <!-- Fórmula KaTeX -->
+        <div class="formula-box">
+          <div id="formula-network"></div>
+        </div>
+
+        <!-- Parámetros fijos -->
+        <div class="parameters-section">
+          <div class="section-label">Parámetros predeterminados del problema</div>
+          <div class="params-grid">
+            <div class="param-item">
+              <div class="param-label">Límite inferior (a / xl)</div>
+              <div class="param-value">9.0 Mbps</div>
+            </div>
+            <div class="param-item">
+              <div class="param-label">Límite superior (b / xu)</div>
+              <div class="param-value">10.0 Mbps</div>
+            </div>
+            <div class="param-item">
+              <div class="param-label">Tolerancia de error (εa)</div>
+              <div class="param-value">0.5 %</div>
+            </div>
+            <div class="param-item">
+              <div class="param-label">Máximo de iteraciones</div>
+              <div class="param-value">50</div>
+            </div>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Restricción de dominio: $C > 8.5\text{ Mbps}$</p>
+        </div>
+
+        <!-- Botón Ejecutar -->
+        <button class="btn-primary" id="btn-run-network">Ejecutar Método de Bisección</button>
+
+        <!-- Mensaje de alerta / error -->
+        <div class="alert-message" id="alert-network"></div>
+
+        <!-- Sección de resultados (se muestra tras ejecutar) -->
+        <div id="results-container-network" class="hidden">
+          
+          <!-- Verificación de signos -->
+          <div class="sign-verification-box" id="sign-box-network">
+            <div class="sign-verification-title">1. Verificación Inicial de Signos en el Intervalo [9, 10]</div>
+            <div class="sign-values-grid">
+              <div class="sign-value-item">f(a) = f(9): <strong id="sign-fa-network">—</strong></div>
+              <div class="sign-value-item">f(b) = f(10): <strong id="sign-fb-network">—</strong></div>
+              <div class="sign-value-item">f(a) · f(b): <strong id="sign-prod-network">—</strong></div>
+            </div>
+            <div id="sign-status-network"></div>
+          </div>
+
+          <!-- Resumen de Convergencia -->
+          <div class="results-summary">
+            <h3>2. Resumen de Convergencia</h3>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-label">Raíz aproximada (C)</div>
+                <div class="summary-value" id="summary-root-network">—</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Valor de f(C)</div>
+                <div class="summary-value" id="summary-froot-network">—</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Error aproximado final (εa)</div>
+                <div class="summary-value" id="summary-error-network">—</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Iteraciones ejecutadas</div>
+                <div class="summary-value" id="summary-iters-network">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabla de iteraciones -->
+          <div class="section-label">3. Tabla Completa de Iteraciones</div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Iteración</th>
+                  <th>a (xl)</th>
+                  <th>b (xu)</th>
+                  <th>xr</th>
+                  <th>f(xr)</th>
+                  <th>εa (%)</th>
+                </tr>
+              </thead>
+              <tbody id="table-body-network">
+                <!-- Se llena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Interpretación de Ingeniería -->
+          <div class="interpretation-box">
+            <h4>4. Interpretación Técnica de Ingeniería</h4>
+            <div id="interpretation-network"></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel Problema 2: Equilibrio Cloud vs On-Premise (Falsa Posición) -->
+    <section class="tab-panel" id="tab-cloud">
+      <div class="card">
+        <h2 class="card-title">Problema 2: Equilibrio de Costos</h2>
+        <div class="card-subtitle">Método de Falsa Posición (Regula Falsi)</div>
+        <p class="card-description">
+          Calcula el punto de equilibrio en el tiempo $t$ (años) entre los costos acumulados de infraestructura On-Premise y Cloud.
+        </p>
+
+        <!-- Fórmula KaTeX -->
+        <div class="formula-box">
+          <div id="formula-cloud"></div>
+          <div class="sub-formulas">
+            <span id="formula-cloud-c1"></span>
+            <span id="formula-cloud-c2"></span>
+          </div>
+        </div>
+
+        <!-- Parámetros fijos -->
+        <div class="parameters-section">
+          <div class="section-label">Parámetros predeterminados del problema</div>
+          <div class="params-grid">
+            <div class="param-item">
+              <div class="param-label">Límite inferior (a / xl)</div>
+              <div class="param-value">3.0 años</div>
+            </div>
+            <div class="param-item">
+              <div class="param-label">Límite superior (b / xu)</div>
+              <div class="param-value">4.0 años</div>
+            </div>
+            <div class="param-item">
+              <div class="param-label">Tolerancia de error (εa)</div>
+              <div class="param-value">0.5 %</div>
+            </div>
+            <div class="param-item">
+              <div class="param-label">Máximo de iteraciones</div>
+              <div class="param-value">50</div>
+            </div>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Restricción de dominio: $t \ge 0\text{ años}$</p>
+        </div>
+
+        <!-- Botón Ejecutar -->
+        <button class="btn-primary" id="btn-run-cloud">Ejecutar Método de Falsa Posición</button>
+
+        <!-- Mensaje de alerta / error -->
+        <div class="alert-message" id="alert-cloud"></div>
+
+        <!-- Sección de resultados (se muestra tras ejecutar) -->
+        <div id="results-container-cloud" class="hidden">
+          
+          <!-- Verificación de signos -->
+          <div class="sign-verification-box" id="sign-box-cloud">
+            <div class="sign-verification-title">1. Verificación Inicial de Signos en el Intervalo [3, 4]</div>
+            <div class="sign-values-grid">
+              <div class="sign-value-item">f(a) = f(3): <strong id="sign-fa-cloud">—</strong></div>
+              <div class="sign-value-item">f(b) = f(4): <strong id="sign-fb-cloud">—</strong></div>
+              <div class="sign-value-item">f(a) · f(b): <strong id="sign-prod-cloud">—</strong></div>
+            </div>
+            <div id="sign-status-cloud"></div>
+          </div>
+
+          <!-- Resumen de Convergencia -->
+          <div class="results-summary">
+            <h3>2. Resumen de Convergencia</h3>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-label">Punto de equilibrio (t)</div>
+                <div class="summary-value" id="summary-root-cloud">—</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Valor de f(t)</div>
+                <div class="summary-value" id="summary-froot-cloud">—</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Error aproximado final (εa)</div>
+                <div class="summary-value" id="summary-error-cloud">—</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Iteraciones ejecutadas</div>
+                <div class="summary-value" id="summary-iters-cloud">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabla de iteraciones -->
+          <div class="section-label">3. Tabla Completa de Iteraciones</div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Iteración</th>
+                  <th>a (xl)</th>
+                  <th>b (xu)</th>
+                  <th>xr</th>
+                  <th>f(xr)</th>
+                  <th>εa (%)</th>
+                </tr>
+              </thead>
+              <tbody id="table-body-cloud">
+                <!-- Se llena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Interpretación de Ingeniería -->
+          <div class="interpretation-box">
+            <h4>4. Interpretación Técnica de Ingeniería</h4>
+            <div id="interpretation-cloud"></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Guía de Aprendizaje Autónomo &bull; Métodos Numéricos &bull; Bisección y Falsa Posición</p>
+    </footer>
+
+  </div>
+
+  <!-- KaTeX Script -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+  <!-- Scripts de la aplicación -->
+  <script src="js/algorithms.js"></script>
+  <script src="js/problems.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
