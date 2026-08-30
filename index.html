@@ -23,7 +23,13 @@
       <p><strong>Método:</strong> Bisección</p>
       <p>Determinar la capacidad C (Mbps) para la cual el modelo de retardo se anula.</p>
       <div class="formula" id="formula-network"></div>
-      <p><strong>Parámetros:</strong> Intervalo [9, 10] · Tolerancia 0.5% · Máx. iteraciones 50 · Dominio: C &gt; 8.5</p>
+      <div class="params">
+        <label>a (xl) <input type="number" id="a-network" value="9" step="any"></label>
+        <label>b (xu) <input type="number" id="b-network" value="10" step="any"></label>
+        <label>Tolerancia (%) <input type="number" id="tol-network" value="0.5" step="any" min="0.0001"></label>
+        <label>Máx. iter. <input type="number" id="max-network" value="50" min="1" step="1"></label>
+      </div>
+      <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 0.5rem;">Dominio: C &gt; 8.5 Mbps</p>
 
       <button class="btn" id="btn-run-network">Ejecutar Bisección</button>
       <div id="alert-network" class="alert" hidden></div>
@@ -57,7 +63,13 @@
       <p><strong>Método:</strong> Falsa Posición (Regula Falsi)</p>
       <p>Hallar el instante t (años) en que se igualan los costos acumulados C₁(t) = 45 + 12t y C₂(t) = 20e<sup>0.4t</sup>.</p>
       <div class="formula" id="formula-cloud"></div>
-      <p><strong>Parámetros:</strong> Intervalo [3, 4] · Tolerancia 0.5% · Máx. iteraciones 50 · Dominio: t ≥ 0</p>
+      <div class="params">
+        <label>a (xl) <input type="number" id="a-cloud" value="3" step="any"></label>
+        <label>b (xu) <input type="number" id="b-cloud" value="4" step="any"></label>
+        <label>Tolerancia (%) <input type="number" id="tol-cloud" value="0.5" step="any" min="0.0001"></label>
+        <label>Máx. iter. <input type="number" id="max-cloud" value="50" min="1" step="1"></label>
+      </div>
+      <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 0.5rem;">Dominio: t ≥ 0 años</p>
 
       <button class="btn" id="btn-run-cloud">Ejecutar Falsa Posición</button>
       <div id="alert-cloud" class="alert" hidden></div>

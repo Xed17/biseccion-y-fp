@@ -25,7 +25,30 @@ function run(problem, id) {
   const resultsEl = document.getElementById('results-' + id);
   alertEl.hidden = true;
 
-  const { defaultA: a, defaultB: b, defaultTolerance: tol, defaultMaxIterations: maxIter } = problem;
+  // Leer valores desde la vista
+  const a = parseFloat(document.getElementById('a-' + id).value);
+  const b = parseFloat(document.getElementById('b-' + id).value);
+  const tol = parseFloat(document.getElementById('tol-' + id).value);
+  const maxIter = parseInt(document.getElementById('max-' + id).value, 10);
+
+  // Validación de entradas
+  if (isNaN(a) || isNaN(b) || isNaN(tol) || isNaN(maxIter)) {
+    alertEl.textContent = 'Por favor ingresa valores numéricos válidos en todos los campos.';
+    alertEl.hidden = false; resultsEl.hidden = true; return;
+  }
+  if (a >= b) {
+    alertEl.textContent = 'El límite inferior (a) debe ser estrictamente menor que el superior (b).';
+    alertEl.hidden = false; resultsEl.hidden = true; return;
+  }
+  if (tol <= 0) {
+    alertEl.textContent = 'La tolerancia debe ser un valor mayor a 0.';
+    alertEl.hidden = false; resultsEl.hidden = true; return;
+  }
+  if (maxIter < 1) {
+    alertEl.textContent = 'El máximo de iteraciones debe ser al menos 1.';
+    alertEl.hidden = false; resultsEl.hidden = true; return;
+  }
+
   const domainErr = problem.validateDomain(a, b);
   if (domainErr) { alertEl.textContent = domainErr; alertEl.hidden = false; resultsEl.hidden = true; return; }
 

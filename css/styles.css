@@ -25,11 +25,18 @@ hr { border: 0; border-top: 1px solid #e9d5ff; margin: 1.25rem 0; }
 }
 .tab.active { color: #7c3aed; border-bottom-color: #7c3aed; font-weight: 600; }
 
-/* Formula & Alert */
+/* Formula, Params & Alert */
 .formula {
   background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 6px;
   padding: 0.75rem; text-align: center; margin: 0.75rem 0; overflow-x: auto;
 }
+.params { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 0.75rem 0; }
+.params label { font-size: 0.8rem; color: #4c1d95; font-weight: 600; display: flex; flex-direction: column; gap: 0.2rem; }
+.params input {
+  padding: 0.4rem 0.5rem; border: 1px solid #ddd6fe; border-radius: 5px;
+  font: inherit; font-size: 0.85rem; width: 110px; background: #fff; color: #222;
+}
+.params input:focus { outline: none; border-color: #7c3aed; }
 .alert { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 0.6rem; border-radius: 6px; margin: 0.75rem 0; }
 
 /* Button */
