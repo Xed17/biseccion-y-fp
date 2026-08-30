@@ -1,7 +1,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
   background: #faf9fc;
   color: #222;
   line-height: 1.6;
@@ -9,11 +9,11 @@ body {
 }
 
 .container { max-width: 800px; margin: 0 auto; }
-
-h1 { font-size: 1.5rem; text-align: center; color: #1e1b4b; }
+h1, h2, h3 { color: #2e1065; }
+h1 { font-size: 1.5rem; text-align: center; }
 .subtitle { text-align: center; color: #6b7280; margin-bottom: 1.5rem; }
-h2 { font-size: 1.15rem; margin-bottom: 0.5rem; color: #2e1065; }
-h3 { font-size: 1rem; margin: 1.25rem 0 0.5rem; color: #3b0764; }
+h2 { font-size: 1.15rem; margin-bottom: 0.5rem; }
+h3 { font-size: 1rem; margin: 1rem 0 0.4rem; }
 hr { border: 0; border-top: 1px solid #e9d5ff; margin: 1.25rem 0; }
 
 /* Tabs */
@@ -23,19 +23,14 @@ hr { border: 0; border-top: 1px solid #e9d5ff; margin: 1.25rem 0; }
   padding: 0.6rem 1rem; cursor: pointer; color: #6b7280;
   border-bottom: 2px solid transparent;
 }
-.tab:hover { color: #1e1b4b; }
 .tab.active { color: #7c3aed; border-bottom-color: #7c3aed; font-weight: 600; }
 
-/* Panels */
-.panel { display: none; }
-.panel.active { display: block; }
-
-/* Formula */
+/* Formula & Alert */
 .formula {
   background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 6px;
-  padding: 0.75rem; text-align: center; margin: 0.75rem 0;
-  overflow-x: auto;
+  padding: 0.75rem; text-align: center; margin: 0.75rem 0; overflow-x: auto;
 }
+.alert { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 0.6rem; border-radius: 6px; margin: 0.75rem 0; }
 
 /* Button */
 .btn {
@@ -44,9 +39,6 @@ hr { border: 0; border-top: 1px solid #e9d5ff; margin: 1.25rem 0; }
   cursor: pointer; margin: 0.75rem 0;
 }
 .btn:hover { background: #6d28d9; }
-
-/* Alert */
-.alert { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 0.6rem; border-radius: 6px; margin: 0.75rem 0; }
 
 /* Table */
 .table-wrap { overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 6px; }
@@ -60,5 +52,3 @@ th:first-child, td:first-child { text-align: center; }
 .interp p { margin-bottom: 0.5rem; }
 .interp ul { padding-left: 1.25rem; }
 .interp li { margin-bottom: 0.25rem; }
-
-.hidden { display: none !important; }

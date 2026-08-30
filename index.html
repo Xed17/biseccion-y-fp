@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Métodos Numéricos: Bisección y Falsa Posición</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -21,28 +18,23 @@
     </nav>
 
     <!-- Problema 1 -->
-    <section class="panel active" id="tab-network">
+    <section class="panel" id="tab-network">
       <h2>Problema 1: Capacidad de Enlace de Red</h2>
       <p><strong>Método:</strong> Bisección</p>
       <p>Determinar la capacidad C (Mbps) para la cual el modelo de retardo se anula.</p>
-
       <div class="formula" id="formula-network"></div>
-
       <p><strong>Parámetros:</strong> Intervalo [9, 10] · Tolerancia 0.5% · Máx. iteraciones 50 · Dominio: C &gt; 8.5</p>
 
       <button class="btn" id="btn-run-network">Ejecutar Bisección</button>
+      <div id="alert-network" class="alert" hidden></div>
 
-      <div id="alert-network" class="alert hidden"></div>
-
-      <div id="results-network" class="hidden">
+      <div id="results-network" hidden>
         <hr>
         <h3>Verificación de signos</h3>
         <p id="sign-info-network"></p>
-
         <hr>
         <h3>Resultado</h3>
         <div id="summary-network"></div>
-
         <hr>
         <h3>Tabla de iteraciones</h3>
         <div class="table-wrap">
@@ -53,7 +45,6 @@
             <tbody id="tbody-network"></tbody>
           </table>
         </div>
-
         <hr>
         <h3>Interpretación</h3>
         <div id="interp-network" class="interp"></div>
@@ -61,28 +52,23 @@
     </section>
 
     <!-- Problema 2 -->
-    <section class="panel" id="tab-cloud">
+    <section class="panel" id="tab-cloud" hidden>
       <h2>Problema 2: Equilibrio de Costos (On-Premise vs Cloud)</h2>
       <p><strong>Método:</strong> Falsa Posición (Regula Falsi)</p>
       <p>Hallar el instante t (años) en que se igualan los costos acumulados C₁(t) = 45 + 12t y C₂(t) = 20e<sup>0.4t</sup>.</p>
-
       <div class="formula" id="formula-cloud"></div>
-
       <p><strong>Parámetros:</strong> Intervalo [3, 4] · Tolerancia 0.5% · Máx. iteraciones 50 · Dominio: t ≥ 0</p>
 
       <button class="btn" id="btn-run-cloud">Ejecutar Falsa Posición</button>
+      <div id="alert-cloud" class="alert" hidden></div>
 
-      <div id="alert-cloud" class="alert hidden"></div>
-
-      <div id="results-cloud" class="hidden">
+      <div id="results-cloud" hidden>
         <hr>
         <h3>Verificación de signos</h3>
         <p id="sign-info-cloud"></p>
-
         <hr>
         <h3>Resultado</h3>
         <div id="summary-cloud"></div>
-
         <hr>
         <h3>Tabla de iteraciones</h3>
         <div class="table-wrap">
@@ -93,7 +79,6 @@
             <tbody id="tbody-cloud"></tbody>
           </table>
         </div>
-
         <hr>
         <h3>Interpretación</h3>
         <div id="interp-cloud" class="interp"></div>
