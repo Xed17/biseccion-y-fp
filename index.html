@@ -10,7 +10,7 @@
 <body>
   <div class="container">
     <h1>Métodos Numéricos</h1>
-    <p class="subtitle">Bisección y Falsa Posición</p>
+    <p class="subtitle">Trabajo Aplicado: Bisección y Falsa Posición</p>
 
     <nav class="tabs">
       <button class="tab active" data-tab="tab-network">Problema 1: Bisección</button>
@@ -19,86 +19,97 @@
 
     <!-- Problema 1 -->
     <section class="panel" id="tab-network">
-      <h2>Problema 1: Capacidad de Enlace de Red</h2>
-      <p><strong>Método:</strong> Bisección</p>
-      <p>Determinar la capacidad C (Mbps) para la cual el modelo de retardo se anula.</p>
-      <div class="formula" id="formula-network"></div>
+      <h2>Problema 1: Enlace de Red (Bisección)</h2>
+      
+      <details class="info-card" open>
+        <summary>📋 Planteamiento y Justificación de [a, b]</summary>
+        <p><strong>Modelo:</strong> Retardo medio en cola $M/M/1$: $T(C) = \frac{1}{C - 8.5} - 0.35 \ln(C - 2) = 0$ con $C > 8.5\text{ Mbps}$ (estabilidad de red ante tráfico $\lambda = 8.5\text{ Mbps}$).</p>
+        <p><strong>Justificación de $[9, 10]$ (Bolzano):</strong> $f(9) \approx +1.319 > 0$ y $f(10) \approx -0.061 < 0$. Cambio de signo $f(9)\cdot f(10) < 0$ en función continua $\implies$ raíz garantizada en $[9, 10]$.</p>
+      </details>
+
+      <div class="equation-card">
+        <label for="expr-network" class="equation-label">Ecuación f(var) = 0:</label>
+        <div class="equation-bar">
+          <input type="text" id="expr-network" class="equation-input" value="1 / (C - 8.5) - 0.35 * ln(C - 2)" placeholder="Ej: x^3 - x - 2">
+          <button type="button" class="btn-secondary" id="btn-reset-network">↺ Restablecer</button>
+        </div>
+        <div class="equation-hint"><span>💡 Operadores: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code>, <code>sqrt</code>, <code>exp</code>, <code>ln</code>, <code>sin</code>, <code>cos</code>. Variable automática.</span></div>
+        <div class="formula" id="formula-network"></div>
+      </div>
+
       <div class="params">
         <label>a (xl) <input type="number" id="a-network" value="9" step="any"></label>
         <label>b (xu) <input type="number" id="b-network" value="10" step="any"></label>
         <label>Tolerancia (%) <input type="number" id="tol-network" value="0.5" step="any" min="0.0001"></label>
-        <label>Máx. iter. <input type="number" id="max-network" value="50" min="1" step="1"></label>
+        <label>Máx. iter. <input type="number" id="max-network" value="50" min="1"></label>
       </div>
-      <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 0.5rem;">Dominio: C &gt; 8.5 Mbps</p>
+      <p id="domain-note-network" class="domain-note">Dominio: (2, 8.5) y (8.5, ∞). Asíntota en C = 8.5.</p>
 
       <button class="btn" id="btn-run-network">Ejecutar Bisección</button>
       <div id="alert-network" class="alert" hidden></div>
 
       <div id="results-network" hidden>
-        <hr>
-        <h3>Verificación de signos</h3>
-        <p id="sign-info-network"></p>
-        <hr>
-        <h3>Resultado</h3>
-        <div id="summary-network"></div>
-        <hr>
-        <h3>Tabla de iteraciones</h3>
+        <hr><h3>Verificación de signos</h3><p id="sign-info-network"></p>
+        <hr><h3>Resultado</h3><div id="summary-network"></div>
+        <hr><h3>Tabla de iteraciones</h3>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr><th>i</th><th>a (xl)</th><th>b (xu)</th><th>xr</th><th>f(xr)</th><th>εa (%)</th></tr>
-            </thead>
+            <thead><tr><th>i</th><th>a (xl)</th><th>b (xu)</th><th>xr</th><th>f(xr)</th><th>εa (%)</th></tr></thead>
             <tbody id="tbody-network"></tbody>
           </table>
         </div>
-        <hr>
-        <h3>Interpretación</h3>
-        <div id="interp-network" class="interp"></div>
+        <hr><h3>Interpretación de ingeniería</h3><div id="interp-network" class="interp"></div>
       </div>
     </section>
 
     <!-- Problema 2 -->
     <section class="panel" id="tab-cloud" hidden>
-      <h2>Problema 2: Equilibrio de Costos (On-Premise vs Cloud)</h2>
-      <p><strong>Método:</strong> Falsa Posición (Regula Falsi)</p>
-      <p>Hallar el instante t (años) en que se igualan los costos acumulados C₁(t) = 45 + 12t y C₂(t) = 20e<sup>0.4t</sup>.</p>
-      <div class="formula" id="formula-cloud"></div>
+      <h2>Problema 2: On-Premise vs Cloud (Falsa Posición)</h2>
+
+      <details class="info-card" open>
+        <summary>📋 Planteamiento y Justificación de [a, b]</summary>
+        <p><strong>Modelo:</strong> $C_1(t) = 45 + 12t$ (On-Premise) y $C_2(t) = 20e^{0.4t}$ (Cloud) en miles de soles (S/.). Equilibrio: $f(t) = 45 + 12t - 20e^{0.4t} = 0$.</p>
+        <p><strong>Justificación de $[3, 4]$:</strong> Barrido $t \in [0, 5]$ años muestra $f(3) = +14.598 > 0$ y $f(4) = -6.061 < 0$. Por Bolzano, existe cambio de signo y raíz en $[3, 4]$.</p>
+      </details>
+
+      <div class="equation-card">
+        <label for="expr-cloud" class="equation-label">Ecuación f(var) = 0:</label>
+        <div class="equation-bar">
+          <input type="text" id="expr-cloud" class="equation-input" value="45 + 12 * t - 20 * exp(0.4 * t)" placeholder="Ej: x^3 - x - 2">
+          <button type="button" class="btn-secondary" id="btn-reset-cloud">↺ Restablecer</button>
+        </div>
+        <div class="equation-hint"><span>💡 Operadores: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code>, <code>sqrt</code>, <code>exp</code>, <code>ln</code>, <code>sin</code>, <code>cos</code>. Variable automática.</span></div>
+        <div class="formula" id="formula-cloud"></div>
+      </div>
+
       <div class="params">
         <label>a (xl) <input type="number" id="a-cloud" value="3" step="any"></label>
         <label>b (xu) <input type="number" id="b-cloud" value="4" step="any"></label>
         <label>Tolerancia (%) <input type="number" id="tol-cloud" value="0.5" step="any" min="0.0001"></label>
-        <label>Máx. iter. <input type="number" id="max-cloud" value="50" min="1" step="1"></label>
+        <label>Máx. iter. <input type="number" id="max-cloud" value="50" min="1"></label>
       </div>
-      <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 0.5rem;">Dominio: t ≥ 0 años</p>
+      <p id="domain-note-cloud" class="domain-note">Dominio sugerido: t ≥ 0 años.</p>
 
       <button class="btn" id="btn-run-cloud">Ejecutar Falsa Posición</button>
       <div id="alert-cloud" class="alert" hidden></div>
 
       <div id="results-cloud" hidden>
-        <hr>
-        <h3>Verificación de signos</h3>
-        <p id="sign-info-cloud"></p>
-        <hr>
-        <h3>Resultado</h3>
-        <div id="summary-cloud"></div>
-        <hr>
-        <h3>Tabla de iteraciones</h3>
+        <hr><h3>Verificación de signos</h3><p id="sign-info-cloud"></p>
+        <hr><h3>Resultado</h3><div id="summary-cloud"></div>
+        <hr><h3>Tabla de iteraciones</h3>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr><th>i</th><th>a (xl)</th><th>b (xu)</th><th>xr</th><th>f(xr)</th><th>εa (%)</th></tr>
-            </thead>
+            <thead><tr><th>i</th><th>a (xl)</th><th>b (xu)</th><th>xr</th><th>f(xr)</th><th>εa (%)</th></tr></thead>
             <tbody id="tbody-cloud"></tbody>
           </table>
         </div>
-        <hr>
-        <h3>Interpretación</h3>
-        <div id="interp-cloud" class="interp"></div>
+        <hr><h3>Interpretación de ingeniería</h3><div id="interp-cloud" class="interp"></div>
       </div>
     </section>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjs@11.8.0/lib/browser/math.js"></script>
   <script src="js/algorithms.js"></script>
   <script src="js/problems.js"></script>
   <script src="js/app.js"></script>
